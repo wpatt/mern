@@ -1,0 +1,28 @@
+# Production compose file (docker-compose.yml)
+version: '3.2'
+
+services:
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - '27018:27017'
+
+  web:
+    build: .
+    volumes:
+      - /approot/node_modules # prevent them being overwritten by the above
+      - .:/approot
+    ports:
+      - 3001:3001
+    environment:
+      NODE_ENV: development
+      SSL: 'false'
+      URL: localhost
+      PORT: 3001
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
